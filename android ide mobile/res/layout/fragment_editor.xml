@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_root">
+
+    <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/bg_bar"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp">
+
+        <ImageButton
+            android:id="@+id/ed_menu"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_menu"
+            android:contentDescription="@string/cd_menu" />
+
+        <!-- Переключатель режима чтение/редактирование: глаз = только чтение,
+             карандаш = редактирование. Виден только при открытом файле. -->
+        <ImageButton
+            android:id="@+id/ed_mode"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_toRightOf="@id/ed_menu"
+            android:layout_centerVertical="true"
+            android:scaleType="centerInside"
+            android:padding="12dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_pencil"
+            android:visibility="gone"
+            android:contentDescription="Режим чтения/редактирования" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/tab_editor"
+            android:textColor="@color/text_primary"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/ed_save"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:scaleType="centerInside"
+            android:padding="12dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_ed_save"
+            android:contentDescription="Сохранить" />
+
+        <ImageButton
+            android:id="@+id/ed_settings"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_toLeftOf="@id/ed_save"
+            android:layout_centerVertical="true"
+            android:scaleType="centerInside"
+            android:padding="12dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_settings"
+            android:contentDescription="Настройки редактора" />
+    </RelativeLayout>
+
+    <!-- ПОЛОСА ВКЛАДОК ОТКРЫТЫХ ФАЙЛОВ -->
+    <HorizontalScrollView
+        android:id="@+id/ed_tabs_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_bar_dark"
+        android:scrollbars="none"
+        android:fillViewport="false">
+
+        <LinearLayout
+            android:id="@+id/ed_tabs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
+
+    <!-- ПУСТОЕ СОСТОЯНИЕ -->
+    <LinearLayout
+        android:id="@+id/ed_empty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:alpha="0.3"
+            android:src="@drawable/ic_tab_editor" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Нет открытых файлов"
+            android:textColor="@color/text_secondary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/ed_open_explorer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="Открыть проводник"
+            android:textColor="@color/accent"
+            android:textSize="14sp"
+            android:padding="10dp"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <!-- ОБЛАСТЬ РЕДАКТОРА: жёлоб номеров строк + код с подсветкой -->
+    <LinearLayout
+        android:id="@+id/ed_code_area"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <!-- Жёлоб номеров строк (синхронно скроллится по вертикали) -->
+        <ScrollView
+            android:id="@+id/ed_gutter_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/bg_bar_dark"
+            android:scrollbars="none">
+
+            <TextView
+                android:id="@+id/ed_gutter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:textColor="@color/text_hint"
+                android:textSize="14sp"
+                android:gravity="right"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:includeFontPadding="false" />
+        </ScrollView>
+
+        <!-- Вертикальный скролл кода -->
+        <ScrollView
+            android:id="@+id/ed_vscroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <!-- Горизонтальный скролл (длинные строки) -->
+            <HorizontalScrollView
+                android:id="@+id/ed_hscroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <!-- Слой подсветки (за EditText) -->
+                    <TextView
+                        android:id="@+id/ed_highlight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:textSize="14sp"
+                        android:textColor="#D4D4D4"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="24dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:includeFontPadding="false"
+                        android:textIsSelectable="false" />
+
+                    <!-- Редактируемый прозрачный слой (поверх подсветки) -->
+                    <EditText
+                        android:id="@+id/ed_input"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:fontFamily="monospace"
+                        android:textSize="14sp"
+                        android:textColor="#00000000"
+                        android:gravity="top|left"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="24dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:includeFontPadding="false"
+                        android:inputType="textMultiLine|textNoSuggestions"
+                        android:scrollHorizontally="true" />
+                </FrameLayout>
+            </HorizontalScrollView>
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- ПРОСМОТР БОЛЬШИХ ФАЙЛОВ (виртуализированный, только для чтения).
+         ListView перерабатывает строки-вьюхи и меряет только видимые строки,
+         поэтому открытие огромного файла мгновенно (в отличие от EditText,
+         который меряет весь текст сразу). Подсветка считается построчно для
+         видимых строк. Горизонтальный скролл — общий для всех строк. -->
+    <LinearLayout
+        android:id="@+id/ed_big_area"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ListView
+            android:id="@+id/ed_big_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg_root"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:scrollbars="vertical"
+            android:fadingEdge="none"
+            android:cacheColorHint="@android:color/transparent" />
+    </LinearLayout>
+
+    <!-- ПРОСМОТР МЕДИА (картинки и т.п.) -->
+    <ScrollView
+        android:id="@+id/ed_media"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/ed_media_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="12dp" />
+    </ScrollView>
+
+</LinearLayout>

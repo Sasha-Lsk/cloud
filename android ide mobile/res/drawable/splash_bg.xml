@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Фон сплеша (windowBackground темы SplashTheme). Показывается МГНОВЕННО, ещё
+     до onCreate. Чтобы не было «скачка» (сначала маленький логотип по центру, затем
+     полноэкранный из layout) — картинка растягивается на весь экран через
+     gravity="fill". Тот же режим (fitXY) используется в activity_splash, поэтому
+     первый кадр темы и последующий layout выглядят ОДИНАКОВО — без изменения размера. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splash_bg" />
+    <item>
+        <bitmap
+            android:src="@drawable/ic_logo"
+            android:gravity="fill" />
+    </item>
+</layer-list>
