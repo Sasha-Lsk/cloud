@@ -1,9 +1,0 @@
-/app/build/
-/build/
-/.idea/
-*.iml
-/local.properties
-/.gradle/
-/captures/
-bin/
-gen/
