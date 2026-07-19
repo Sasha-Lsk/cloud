@@ -3,7 +3,10 @@ package com.apkstudio.tool;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -52,6 +55,8 @@ public class MainActivity extends Activity {
             public void onClick(View v) { shareBuilt(); }
         });
 
+        ensureStoragePermission();
+
         new Thread(new Runnable() {
             public void run() {
                 try {
@@ -62,6 +67,31 @@ public class MainActivity extends Activity {
                 }
             }
         }).start();
+    }
+
+    // ---- Доступ ко всем файлам (нужен для записи в Download на Android 11+) ----
+    private void ensureStoragePermission() {
+        try {
+            if (Build.VERSION.SDK_INT >= 30) {          // Android 11+
+                if (!Environment.isExternalStorageManager()) {
+                    log.line("Дайте приложению доступ ко всем файлам (откроется настройка).");
+                    Intent i = new Intent(
+                            Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    i.setData(Uri.parse("package:" + getPackageName()));
+                    try { startActivity(i); }
+                    catch (Exception e) {
+                        startActivity(new Intent(
+                                Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION));
+                    }
+                }
+            } else {                                     // Android 6..10
+                requestPermissions(new String[]{
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE}, 200);
+            }
+        } catch (Exception e) {
+            log.line("Не удалось запросить доступ к файлам: " + e);
+        }
     }
 
     // ---- Выбор APK через системный диалог (SAF) ----
@@ -142,7 +172,7 @@ public class MainActivity extends Activity {
     private void shareBuilt() {
         try {
             if (env == null) env = new Env(this);
-            File apk = new File(env.work, "built_signed.apk");
+            File apk = new File(env.out, "built_signed.apk");
             if (!apk.exists()) {
                 Toast.makeText(this, "Сначала соберите APK", Toast.LENGTH_SHORT).show();
                 return;

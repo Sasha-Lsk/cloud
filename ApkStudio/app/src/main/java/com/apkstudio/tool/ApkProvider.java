@@ -25,7 +25,7 @@ public class ApkProvider extends ContentProvider {
 
     private File resolve(Uri uri) {
         String name = uri.getLastPathSegment();
-        return new File(new File(getContext().getFilesDir(), "work"), name);
+        return new File("/storage/emulated/0/Download/ApkStudio", name);
     }
 
     @Override public boolean onCreate() { return true; }

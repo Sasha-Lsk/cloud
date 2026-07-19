@@ -32,7 +32,7 @@ public class Pipeline {
     // ---------- 1. APK -> smali + ресурсы (декомпиляция для правки) ----------
     public File decodeToSmali(File apk) throws Exception {
         String name = stripExt(apk.getName());
-        File out = new File(env.work, name + "_smali");
+        File out = new File(env.out, name + "_smali");
         cleanDir(out);
         log.line("== APK -> smali ==");
 
@@ -63,7 +63,7 @@ public class Pipeline {
     // ---------- 2. APK -> Java (ТОЛЬКО чтение, jadx) ----------
     public File decodeToJava(File apk) throws Exception {
         String name = stripExt(apk.getName());
-        File out = new File(env.work, name + "_java");
+        File out = new File(env.out, name + "_java");
         cleanDir(out);
         log.line("== APK -> Java (только для чтения!) ==");
         log.line("Этот Java обычно НЕ компилируется обратно. Для сборки правьте smali.");
@@ -108,7 +108,7 @@ public class Pipeline {
         }
 
         // Шаг 4: подпись через apksig (v1+v2)
-        File signed = new File(env.work, "built_signed.apk");
+        File signed = new File(env.out, "built_signed.apk");
         log.line("4) подпись APK (testkey)");
         Signer.sign(env,
                 toSign,
@@ -155,7 +155,7 @@ public class Pipeline {
         File unsigned = new File(env.work, "built_unsigned.apk");
         log.line("2) упаковка APK");
         zipDir(resRaw, unsigned);
-        File signed = new File(env.work, "built_signed.apk");
+        File signed = new File(env.out, "built_signed.apk");
         log.line("3) подпись");
         Signer.sign(env, unsigned, signed,
                 new File(env.engines, "testkey.pk8"),

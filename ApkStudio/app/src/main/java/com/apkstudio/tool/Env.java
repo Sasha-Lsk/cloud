@@ -15,10 +15,10 @@ import java.io.OutputStream;
  */
 public class Env {
 
-    public final File work;      // рабочая корневая папка
-    public final File engines;   // распакованные .jar движки
+    public final File work;      // приватная рабочая папка (temp, dexcache)
+    public final File engines;   // распакованные .jar движки (приватно, для DexClassLoader)
     public final File bin;       // нативные бинарники (aapt) под текущий ABI
-    public final File androidJar;// платформенный android.jar
+    public final File out;       // ПУБЛИЧНАЯ папка результатов: Download/ApkStudio
     public final String abi;
 
     private final Context ctx;
@@ -26,13 +26,17 @@ public class Env {
     public Env(Context ctx) throws Exception {
         this.ctx = ctx;
         this.abi = pickAbi();
+        // Приватные папки: движки и dexcache ОБЯЗАНЫ быть приватными,
+        // иначе DexClassLoader откажется грузить dex из публичной папки.
         this.work = new File(ctx.getFilesDir(), "work");
         this.engines = new File(ctx.getFilesDir(), "engines");
         this.bin = new File(ctx.getFilesDir(), "bin");
-        this.androidJar = new File(engines, "android.jar");
+        // ПУБЛИЧНАЯ папка результатов — видна любым файловым менеджером.
+        this.out = new File("/storage/emulated/0/Download/ApkStudio");
         work.mkdirs();
         engines.mkdirs();
         bin.mkdirs();
+        out.mkdirs();
     }
 
     /** Выбираем ABI, для которого есть aapt в assets. */
@@ -99,5 +103,6 @@ public class Env {
         extractAsset("engines/testkey.pk8", new File(engines, "testkey.pk8"), false);
         extractAsset("engines/testkey.x509.pem", new File(engines, "testkey.x509.pem"), false);
         log.line("Окружение готово.");
+        log.line("Результаты будут здесь: " + out.getAbsolutePath());
     }
 }

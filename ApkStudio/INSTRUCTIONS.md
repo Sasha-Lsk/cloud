@@ -79,22 +79,29 @@ ApkStudio/                      ← открывать в AIDE ЭТУ папку
 
 ## 4. Как пользоваться
 
+ВСЕ результаты сохраняются в ПУБЛИЧНУЮ папку, видимую любым файловым
+менеджером (без root):
+    /storage/emulated/0/Download/ApkStudio/
+При первом запуске приложение попросит «Доступ ко всем файлам» — разрешите,
+иначе запись в Download невозможна (Android 11+).
+
 ### APK → smali (для правки)
-1. Введите путь к APK, напр. `/sdcard/target.apk`.
+1. Кнопка **Выбрать APK** (или введите путь).
 2. Кнопка **APK → smali**.
-3. Результат в `.../files/work/target_smali/`:
+3. Результат: `/storage/emulated/0/Download/ApkStudio/target_smali/`:
    `res_raw/` (ресурсы+manifest+dex), `smali/`, `smali_classes2/` …
-4. Правьте `.smali` файлы.
+4. Правьте `.smali` файлы прямо там.
 
 ### APK → Java (для чтения)
-1. Путь к APK → **APK → Java**.
-2. Результат `.../work/target_java/` — читаемый Java (собрать нельзя).
+1. Выбрать APK → **APK → Java**.
+2. Результат `/storage/emulated/0/Download/ApkStudio/target_java/` — читаемый
+   Java (собрать нельзя, только чтение).
 
 ### smali → APK (пересборка)
 1. В поле пути укажите ПАПКУ проекта `target_smali`.
 2. Кнопка **smali → APK**.
 3. Внутри строго: smali→classes*.dex → zip(без META-INF) → zipalign → подпись.
-4. Результат `.../work/built_signed.apk` — ставится на телефон.
+4. Результат `/storage/emulated/0/Download/ApkStudio/built_signed.apk`.
 
 ### Выбрать APK / Поделиться
 - Кнопка **Выбрать APK** — системный диалог (SAF), APK копируется в рабочую
