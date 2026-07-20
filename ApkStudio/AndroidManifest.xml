@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.apkstudio.mobile"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <!-- targetSdkVersion 33: без него старые targetSdk дают системное окно
+         «Это приложение разработано для более старой версии системы».
+         minSdk 24 — dex-версии движка jadx (dex 038) требуют API >= 26 при
+         загрузке через DexClassLoader; 24 берём с запасом на декомпиляцию. -->
+    <uses-sdk
+        android:minSdkVersion="24"
+        android:targetSdkVersion="33" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+    <!-- Полный доступ к общему хранилищу (Android 11+): нужен, чтобы читать APK
+         из любой папки и писать распаковку/сборку в /storage/emulated/0/Download. -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:theme="@style/AppTheme">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Собственный провайдер для отдачи готовых APK/файлов внешним
+             приложениям (открыть/поделиться) без androidx. -->
+        <provider
+            android:name=".OutFileProvider"
+            android:authorities="com.apkstudio.mobile.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
+    </application>
+
+</manifest>
